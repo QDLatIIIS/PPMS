@@ -27,6 +27,7 @@ xlabel frequency/GHz;
 ylabel(sprintf('B field, from %.1f Oe to %.01f Oe to %.1f Oe',...
                 actualFields(1), max(actualFields),actualFields(end)));
 title(sprintf('Field Sweep %s', datestr(timeStamps(1),30) ) );
+saveas(hfig_clmp,sprintf('Field_Sweep_%s.png', datestr(timeStamps(1),30) ) )
 hold off;
 
 
@@ -47,6 +48,8 @@ ylabel S21/dB;
 title(sprintf('Field Sweep Horizontal Line plot %s', datestr(timeStamps(1),30) ) ); 
 legend(lgds{:});
 hold off;
+saveas(hfig_lp,sprintf('Field_Sweep_Horizontal_Line_plot_%s.fig', datestr(timeStamps(1),30) ) );
+saveas(hfig_lp,sprintf('Field_Sweep_Horizontal_Line_plot_%s.png', datestr(timeStamps(1),30) ) );
 
 %% vertical line plot (i.e., S parameter vs field)
 % parameter
@@ -69,6 +72,8 @@ ylabel S21/dB;
 title(sprintf('Field Sweep Vertical Line plot %s', datestr(timeStamps(1),30) ) );
 legend(lgds{:});
 hold off;
+saveas(hfig_vlp,sprintf('Field_Sweep_Vertical_Line_plot_%s.png', datestr(timeStamps(1),30) ) );
+saveas(hfig_vlp,sprintf('Field_Sweep_Vertical_Line_plot_%s.fig', datestr(timeStamps(1),30) ) );
 
 %% fit
 

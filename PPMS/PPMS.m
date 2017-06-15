@@ -37,18 +37,23 @@ classdef PPMS < handle
     % See Constant properties for available options for 'tempApproach',
     % 'fieldApproach', and 'fieldMode'
     %
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % ATTENTION: 
     %   1. Setting 'fieldMode' to 'Persistent' etc. is not working as
     %       expected.
     %   2. Sometimes you might need to manually load the dll file using NET.addAssembly(dllfilepath)
+    %       e.g.:  NET.addAssembly('C:\Users\IIIS\Documents\MATLAB\PPMS\QDInstrument.dll');
     %       when you first started MATLAB, try initializing ppms and also try
     %       calling QuantumDesign.QDInstrument.QDInstrumentType.DynaCool
     %       etc. for multiple times until it works. It will work when
     %       auto-completion (by using TAB button) works.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %
     % In development (May 12, 2017)
     % Testing (May 13, 2017)
     % Add get status in string format (May 14, 2017)
+    % TODO:
+    %   add method for chamber
     % Wentao, May 2017
     %
 

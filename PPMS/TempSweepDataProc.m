@@ -18,14 +18,22 @@ load(fname);
 %% colormap
 hfig_clmp = figure;
 [~,maxInd] = max(setTemps);
+double_direction_sweep=1;
+if double_direction_sweep
 contourf(freqs/1e9,[linspace(actualTemps(1),actualTemps(maxInd),maxInd),...
             linspace(actualTemps(maxInd+1),2*actualTemps(maxInd+1)-actualTemps(end),...
             length(actualTemps) - maxInd)],...
         20*log10(abs(SParams)),20,'edgecolor','none');
+else
+    contourf(freqs/1e9,actualTemps,...
+        20*log10(abs(SParams)),20,'edgecolor','none');
+end
 xlabel frequency/GHz;
 ylabel(sprintf('Temperature, from %.1f K to %.1f K to %.1f K',...
                 actualTemps(1), max(actualTemps),actualTemps(end)));
 title(sprintf('Temperature Sweep %s', datestr(timeStamps(1),30) ) );
+colorbar('location','eastoutside')
+
 hold off;
 saveas(hfig_clmp,sprintf('Temperature_Sweep_%s.png',datestr(timeStamps(end),30)));
 % saveas(hfig_clmp,sprintf('Temperature_Sweep_%s.fig',datestr(timeStamps(end),30)));

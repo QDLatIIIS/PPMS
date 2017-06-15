@@ -14,6 +14,8 @@ p.addParameter('config',struct('ifbw',100,...
                 'outp',1),@isstruct);
 p.addParameter('hfig',2333,@isnumeric);
 p.addParameter('maxAvg',500,@isnumeric);
+p.addParameter('notes','',@ischar);         % notes to add in file name
+
 p.parse(varargin{:});
 expandStructure(p.Results);
 
@@ -58,8 +60,9 @@ for ii = 1:numOfPowers
 end
 xlabel frequency/Hz
 ylabel power/dBm
-title(sprintf('PowerSweep_start_%.4fGHz_stop_%.4fGHz_min_%ddBm_max_%ddBm',...
-                min(freqs)/1e9,max(freqs)/1e9,minPow,maxPow),'interpreter','none');
+colorbar('location','eastoutside')
+title(sprintf('PowerSweep_start_%.4fGHz_stop_%.4fGHz_min_%ddBm_max_%ddBm%s',...
+                min(freqs)/1e9,max(freqs)/1e9,minPow,maxPow,notes),'interpreter','none');
 str = [get(get(gca,'Title'),'String') '.png'];
 saveas(gcf,str);
 
@@ -67,8 +70,8 @@ saveas(gcf,str);
 vna.power = -10;
 stopTime = datestr(now,30);
 fprintf('Sweep finished at %s.\n',startTime);
-save(sprintf('PowerSweep_start_%.4fGHz_stop_%.4fGHz_min_%ddBm_max_%ddBm.mat',...
-                min(freqs)/1e9,max(freqs)/1e9,minPow,maxPow),...
+save(sprintf('PowerSweep_start_%.4fGHz_stop_%.4fGHz_min_%ddBm_max_%ddBm%s.mat',...
+                min(freqs)/1e9,max(freqs)/1e9,minPow,maxPow,notes),...
     'pows','freqs','SParams','config','startTime','stopTime');
 
 %% fit
@@ -78,7 +81,7 @@ Qcs = f0s;
 Qls = f0s;
 for ii = 1:numOfPowers
     [ f_r,Q_i,Q_c,Q_l ] = vna.fit('fitall',true,'issavefig',false,...
-                                  'xdata',freqs,'ydata',20*log10(abs(SParams(ii,:))),...
+                                  'xdata',freqs/1e9,'ydata',20*log10(abs(SParams(ii,:))),...
                                   'titleNotes',sprintf('_pow_%ddBm',pows(ii)) );
     f0s(ii) = f_r;
     Qis(ii) = Q_i;

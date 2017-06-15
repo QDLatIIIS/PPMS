@@ -374,6 +374,7 @@ classdef E5071C < handle
             for i = 1:numOfSections
                 obj.freqCenter = start + freqSectionSpan/2 +  freqSectionSpan* (i-1);
                 fprintf('sweeping %.2fGHz to %.2fGHz...\n',obj.freqStart/1e9,obj.freqStop/1e9);
+                obj.clearAvg;
                 pause(waitTime);
                 tmptrace = obj.trace;
                 tmpfreqs = obj.freqs;
@@ -500,7 +501,7 @@ classdef E5071C < handle
             p.addParameter('xdata',[],@isnumeric);      % xdata in GHz frequency
             p.addParameter('ydata',[],@isnumeric);      % ydata given in dB
             p.addParameter('titleNotes','',@ischar);    % notes to add to the figure title
-            p.addParameter('QGuess',1e5,@isnumeric);
+            p.addParameter('QGuess',1e4,@isnumeric);
             p.parse(varargin{:});
             expandStructure(p.Results);
             
@@ -521,7 +522,7 @@ classdef E5071C < handle
                 xlabel frequency/GHz;
                 ylabel S/dB;
                 title([sprintf('start_%.4fGHz_stop_%.4fGHz',...
-                    min(xdata)/1e9, max(xdata)/1e9 ) titleNotes],'interpreter','none');
+                    min(xdata), max(xdata) ) titleNotes],'interpreter','none');
             end
                 
             if fitall
@@ -545,13 +546,20 @@ classdef E5071C < handle
             % guess initial parameters
             peakInd = find(abs(ydata)>=max(abs(ydata)),1);
             freq0 = xdata(peakInd); % in GHz
-            x1 = [freq0, QGuess/1e4, QGuess/1e4, 0, 0, 0];
+          x1 = [freq0, QGuess/1e4, QGuess/1e4, 0, 0, 0];
+%             x1 = [freq0, QGuess/1e4, QGuess/1e4, 0, 0, 0,...
+%                             0,0];
 
             % fit with complex S21 deduced theoretically
             % 8 parameter, linear base
             %         F = @(x,xdata)(20.*log10(abs(x(6).*(1+x(5).*(xdata-x(1).*1e9)./(x(1).*1e9)).*(1-(x(2).^2.*1e4.*x(3).^2.*1e4./cos(x(4)))./(x(2).^2.*1e4 + x(3).^2.*1e4./cos(x(4)))./(x(3).^2.*1e4).*(cos(x(4))+1i.*sin(x(4)))./(1+2.*1i.*(x(2).^2.*1e4.*x(3).^2.*1e4./cos(x(4)))./(x(2).^2.*1e4 + x(3).^2.*1e4./cos(x(4))).*(xdata-x(1).*1e9)./(x(1).*1e9)))))+x(7).*xdata.*1e-9+x(8));
             % 7 parameter, constant base
+            
+            %
             F = @(x,xdata)(abs(x(6).*(1+x(5).*(xdata-x(1).*1e9)./(x(1).*1e9)).*(1-(x(2).^2.*1e4.*x(3).^2.*1e4./cos(x(4)))./(x(2).^2.*1e4 + x(3).^2.*1e4./cos(x(4)))./(x(3).^2.*1e4).*(cos(x(4))+1i.*sin(x(4)))./(1+2.*1i.*(x(2).^2.*1e4.*x(3).^2.*1e4./cos(x(4)))./(x(2).^2.*1e4 + x(3).^2.*1e4./cos(x(4))).*(xdata-x(1).*1e9)./(x(1).*1e9)))));
+            % test adding background, 20170524
+%             F = @(x,xdata)(x(7) + x(8).*xdata + abs(x(6).*(1+x(5).*(xdata-x(1).*1e9)./(x(1).*1e9)).*(1-(x(2).^2.*1e4.*x(3).^2.*1e4./cos(x(4)))./(x(2).^2.*1e4 + x(3).^2.*1e4./cos(x(4)))./(x(3).^2.*1e4).*(cos(x(4))+1i.*sin(x(4)))./(1+2.*1i.*(x(2).^2.*1e4.*x(3).^2.*1e4./cos(x(4)))./(x(2).^2.*1e4 + x(3).^2.*1e4./cos(x(4))).*(xdata-x(1).*1e9)./(x(1).*1e9)))));
+            
             %x(1): f, center frequency, in GHz
             %x(2): Qi, intrinsic Q, Ql = Qi*Qc/(Qi + Qc) =  (x(2).*x(3)./cos(x(4)))./(x(2) + x(3)./cos(x(4))), in 1e4
             %x(3): |Qe|, parameter Q, 1/Qc = Re (1/Qe) = cos(theta)/Qe, in 1e4

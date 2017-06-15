@@ -116,7 +116,7 @@ if ii < length(pows)
     fprintf('Sweeping with power %.2fdBm for %d seconds at %s...\n',...
         pow, waitTime, datestr(now,30));
 else
-    fprinft('Sweep finished at %s!',datestr(now,30));
+    fprintf('Sweep finished at %s!',datestr(now,30));
 end
 
 end
